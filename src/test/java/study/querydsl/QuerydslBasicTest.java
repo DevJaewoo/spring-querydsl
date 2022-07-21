@@ -91,4 +91,25 @@ public class QuerydslBasicTest {
         //then
         assertThat(findMember.getUsername()).isEqualTo("member1");
     }
+
+    @Test
+    public void resultFetchTest() throws Exception {
+
+        queryFactory
+                .selectFrom(member)
+                .fetch();
+
+//        queryFactory
+//                .selectFrom(member)
+//                .fetchOne();
+
+        queryFactory
+                .selectFrom(member)
+                .fetchFirst();
+
+        queryFactory
+                .select(member.count())
+                .from(member)
+                .fetchOne();
+    }
 }
