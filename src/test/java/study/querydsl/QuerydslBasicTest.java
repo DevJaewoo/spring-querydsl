@@ -14,6 +14,8 @@ import study.querydsl.entity.QTeam;
 import study.querydsl.entity.Team;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
 
 import java.util.List;
 
@@ -279,5 +281,45 @@ public class QuerydslBasicTest {
         for (Tuple tuple : result) {
             System.out.println("tuple = " + tuple);
         }
+    }
+
+    @PersistenceUnit
+    EntityManagerFactory emf;
+
+    @Test
+    public void withoutFetch() throws Exception {
+        //given
+        em.flush();
+        em.clear();
+
+        //when
+        Member result = queryFactory
+                .selectFrom(member)
+                .where(member.username.eq("member1"))
+                .fetchOne();
+
+        boolean loaded = emf.getPersistenceUnitUtil().isLoaded(result.getTeam());
+
+        //then
+        assertThat(loaded).isFalse();
+    }
+
+    @Test
+    public void withFetch() throws Exception {
+        //given
+        em.flush();
+        em.clear();
+
+        //when
+        Member result = queryFactory
+                .selectFrom(member)
+                .join(member.team, team).fetchJoin()
+                .where(member.username.eq("member1"))
+                .fetchOne();
+
+        boolean loaded = emf.getPersistenceUnitUtil().isLoaded(result.getTeam());
+
+        //then
+        assertThat(loaded).isTrue();
     }
 }
