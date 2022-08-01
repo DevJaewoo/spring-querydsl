@@ -676,4 +676,76 @@ public class QuerydslBasicTest {
     private BooleanExpression allEq(String usernameParam, Integer ageParam) {
         return usernameEq(usernameParam).and(ageEq(ageParam));
     }
+
+    @Test
+    public void bulkUpdate() throws Exception {
+        //given
+
+        //when
+        long count = queryFactory
+                .update(member)
+                .set(member.username, "비회원")
+                .where(member.age.lt(25))
+                .execute();
+
+        System.out.println("count = " + count);
+
+        em.flush();
+        em.clear();
+
+        //then
+        List<Member> result = queryFactory
+                .selectFrom(member)
+                .fetch();
+
+        for (Member member : result) {
+            System.out.println("member = " + member);
+        }
+    }
+
+    @Test
+    public void bulkAdd() throws Exception {
+        //given
+
+        //when
+        queryFactory
+                .update(member)
+                .set(member.age, member.age.add(10))
+                .execute();
+
+        em.flush();
+        em.clear();
+
+        //then
+        List<Member> result = queryFactory
+                .selectFrom(member)
+                .fetch();
+
+        for (Member member : result) {
+            System.out.println("member = " + member);
+        }
+    }
+
+    @Test
+    public void bulkDelete() throws Exception {
+        //given
+
+        //when
+        queryFactory
+                .delete(member)
+                .where(member.age.lt(25))
+                .execute();
+
+        em.flush();
+        em.clear();
+
+        //then
+        List<Member> result = queryFactory
+                .selectFrom(member)
+                .fetch();
+
+        for (Member member : result) {
+            System.out.println("member = " + member);
+        }
+    }
 }
