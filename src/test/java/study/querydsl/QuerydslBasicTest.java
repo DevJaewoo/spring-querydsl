@@ -669,7 +669,7 @@ public class QuerydslBasicTest {
     }
 
     private BooleanExpression ageEq(Integer ageParam) {
-        if(ageParam != null) return null;
+        if(ageParam == null) return null;
         return member.age.eq(ageParam);
     }
 
